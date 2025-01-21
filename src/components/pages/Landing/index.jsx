@@ -87,13 +87,13 @@ export const LandingPage = () => {
         </section>
 
         {/* Description Section */}
-        <section className="flex flex-col sm:flex-row items-center justify-center my-12 px-4 gap-8">
+        <section className="flex flex-col sm:flex-row items-center justify-center my-24 px-8 gap-20">
           {/* Image */}
           <div className="flex-shrink-0">
             <img
               src="/src/assets/paper-stack.jpg"
               alt="Stack of documents"
-              className="w-72 h-auto rounded shadow-md"
+              className="w-auto h-72 rounded shadow-md"
             />
           </div>
 
@@ -112,7 +112,7 @@ export const LandingPage = () => {
         </section>
 
         {/* Systemic Disparity Section */}
-        <h1 className="text-5xl font-normal text-center my-12">Systemic Disparity Insights</h1>
+        <h1 className="text-5xl font-normal text-center my-20">Systemic Disparity Insights</h1>
         <section className="grid grid-cols-1 sm:grid-cols-3 gap-8 text-center my-12 px-4">
           <div>
             <p className="text-3xl font-normal text-gray-800">36%</p>
@@ -140,7 +140,7 @@ export const LandingPage = () => {
         </section>
 
         {/* Read More Button */}
-        <div className="text-center my-8">
+        <div className="text-center my-24">
           <button
             onClick={handleReadMore}
             className="px-6 py-3 bg-gray-600 text-white rounded shadow hover:bg-blue-700"
