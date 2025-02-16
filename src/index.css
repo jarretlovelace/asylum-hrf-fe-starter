@@ -7,22 +7,37 @@ body {
     padding: 0;
 }
 
+.container {
+    @apply max-w-4xl mx-auto px-4 md:px-6;
+}
+
 .primary-c {
-    @apply bg-[#666555]
+    @apply bg-[#666555];
 }
 
 .secondary-c {
-    @apply bg-[#f9f9f9]
+    @apply bg-[#f9f9f9];
 }
 
 .flex-c {
-    @apply flex flex-col
+    @apply flex flex-col;
 }
 
 .flex-c-1 {
-    @apply flex flex-col flex-1
+    @apply flex flex-col flex-1;
 }
 
 .nav-btn {
-   @apply text-[#E2F0F7] hover:border-[#E2F0F7] border-transparent border-2 px-3 py-2 rounded-xl
+   @apply text-[#E2F0F7] hover:border-[#E2F0F7] border-transparent border-2 px-3 py-2 rounded-xl;
+}
+
+/* New class for title and text background */
+.title-bg {
+    @apply bg-[#666555] text-white p-4;
+}
+
+/* Custom button styles */
+.custom-button1 {
+    @apply bg-[#f9f9f9] hover:bg-[#666555] hover:text-white border-[#666555] border-2 px-3 py-2 rounded-xl 
+           transition duration-300 ease-in-out shadow-md hover:shadow-lg;
 }
