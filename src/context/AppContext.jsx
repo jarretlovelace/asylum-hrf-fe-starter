@@ -1,53 +1,83 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import axios from 'axios';
-import testData from '../data/test_data.json';
 import { useLocalStorage } from '../hooks/useLocalStorage.js';
 
-const AppContext = createContext({});
+const API_BASE_URL = "http://hrf-asylum-be-b.herokuapp.com/cases";
 
-/**
- * TODO: Ticket 2:
- * - Use axios to fetch the data
- * - Store the data
- * - Populate the graphs with the stored data
- */
 const useAppContextProvider = () => {
-  const [graphData, setGraphData] = useState(testData);
+  const [graphData, setGraphData] = useState(null);
   const [isDataLoading, setIsDataLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useLocalStorage({ graphData, setGraphData });
 
-  const getFiscalData = () => {
-    // TODO: Replace this with functionality to retrieve the data from the fiscalSummary endpoint
-    const fiscalDataRes = testData;
-    return fiscalDataRes;
+  // 🔄 Fetch Fiscal Year Data from API
+  const getFiscalData = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/fiscalSummary`);
+      return response.data;
+    } catch (err) {
+      console.error("Error fetching fiscal data:", err);
+      setError("Failed to fetch fiscal data");
+      return null;
+    }
   };
 
+  // 🔄 Fetch Citizenship Data from API
   const getCitizenshipResults = async () => {
-    // TODO: Replace this with functionality to retrieve the data from the citizenshipSummary endpoint
-    const citizenshipRes = testData.citizenshipResults;
-    return citizenshipRes;
+    try {
+      const response = await axios.get(`${API_BASE_URL}/citizenshipSummary`);
+      return response.data;
+    } catch (err) {
+      console.error("Error fetching citizenship data:", err);
+      setError("Failed to fetch citizenship data");
+      return null;
+    }
   };
 
+  // 🏁 Fetch and set data
+  const fetchData = async () => {
+    try {
+      setIsDataLoading(true);
+
+      const [fiscalData, citizenshipData] = await Promise.all([
+        getFiscalData(),
+        getCitizenshipResults(),
+      ]);
+
+      if (fiscalData && citizenshipData) {
+        setGraphData({
+          ...fiscalData,
+          citizenshipResults: citizenshipData,
+        });
+      }
+    } catch (err) {
+      console.error("Error during data fetching:", err);
+      setError("Failed to fetch data.");
+    } finally {
+      setIsDataLoading(false);
+    }
+  };
+
+  // 🔄 Refresh Data Manually
   const updateQuery = async () => {
     setIsDataLoading(true);
+    fetchData();
   };
 
-  const fetchData = async () => {
-    // TODO: fetch all the required data and set it to the graphData state
-  };
-
+  // 🚫 Clear Data
   const clearQuery = () => {
-    setGraphData({});
+    setGraphData(null);
   };
 
-  const getYears = () => graphData?.yearResults?.map(({ fiscal_year }) => Number(fiscal_year)) ?? [];
+  // 📊 Extract Years for Graphs
+  const getYears = () =>
+    graphData?.yearResults?.map(({ fiscal_year }) => Number(fiscal_year)) ?? [];
 
+  // 🎬 Fetch Data on Mount
   useEffect(() => {
-    if (isDataLoading) {
-      fetchData();
-    }
-  }, [isDataLoading]);
+    fetchData();
+  }, []);
 
   return {
     graphData,
@@ -56,8 +86,11 @@ const useAppContextProvider = () => {
     updateQuery,
     clearQuery,
     getYears,
+    error,
   };
 };
+
+const AppContext = createContext();
 
 export function useAppContext() {
   return useContext(AppContext);
@@ -66,5 +99,9 @@ export function useAppContext() {
 export function ProvideAppContext({ children }) {
   const contextValue = useAppContextProvider();
 
-  return <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>;
+  return (
+    <AppContext.Provider value={contextValue}>
+      {children}
+    </AppContext.Provider>
+  );
 }
